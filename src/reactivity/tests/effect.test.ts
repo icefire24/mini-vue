@@ -14,4 +14,15 @@ describe('effect',() => {
         user.age = 20
         expect(nextage).toBe(21)
     })
+    test("", () => {
+        let foo = 10
+        const runner=effect(() => {
+            foo++
+            return "foo"
+        })
+        expect(foo).toBe(11)
+        const r = runner()
+        expect(foo).toBe(12)
+        expect(r).toBe("foo")
+    })
 })
