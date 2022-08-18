@@ -5,6 +5,7 @@
   "scripts": {
     "test": "jest"
   },
+  "type": "module",
   "license": "MIT",
   "dependencies": {
     "@types/jest": "^28.1.7",
