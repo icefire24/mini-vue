@@ -1,4 +1,5 @@
-import {add} from '../../index'
+import {reactive} from '../reactive'
+import {  effect } from '../effect'
 describe('effect',() => {
 
     test("effect", () => {
