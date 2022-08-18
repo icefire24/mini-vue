@@ -1,4 +1,4 @@
-import { reactive } from "../reactive";
+import { isReactive, isReadonly, reactive, readonly } from "../reactive";
 import { effect, stop } from "../effect";
 describe("effect", () => {
   test("effect", () => {
@@ -33,8 +33,8 @@ describe("effect", () => {
     obj.prop = 2;
     expect(dummy).toBe(2);
      stop(runner);
-    obj.prop = 3
-    // obj.prop++;
+    // obj.prop = 3
+    obj.prop++;
     expect(dummy).toBe(2);
 
     // stopped effect should still be manually callable
@@ -49,5 +49,21 @@ describe("effect", () => {
 
       stop(runner);
       expect(onStop).toHaveBeenCalled();
+    });
+    it("should make nested values readonly", () => {
+      const original = { foo: 1, bar: { baz: 2 } };
+      const origina2 = { foo: 1, bar: { baz: 2 } };
+      const wrapped = readonly(original);
+      expect(wrapped).not.toBe(original);
+    //   expect(isProxy(wrapped)).toBe(true);
+      expect(isReadonly(wrapped)).toBe(true);
+      expect(isReactive(original)).toBe(false);
+      expect(isReadonly(original)).toBe(false);
+      expect(isReactive(wrapped.bar)).toBe(false);
+    //   expect(isReadonly(wrapped.bar)).toBe(true);
+    //   expect(isReactive(original.bar)).toBe(false);
+    //   expect(isReadonly(original.bar)).toBe(false);
+      // get
+      expect(wrapped.foo).toBe(1);
     });
 });

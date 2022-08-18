@@ -1,4 +1,6 @@
 import { extend } from "../shared";
+let shouldTrack = false;
+let activeEffect;
 
 class ReactiveEffect {
   private _fn;
@@ -19,8 +21,18 @@ class ReactiveEffect {
     }
   }
   run() {
+    if (!this.active) {
+      activeEffect = this;
+      return this._fn();
+    }
+    shouldTrack = true;
     activeEffect = this;
-    return this._fn();
+    const result = this._fn();
+
+    // 执行fn后停止收集依赖
+    shouldTrack = false;
+
+    return result;
   }
 }
 const cleanupEffect = (effect) => {
@@ -29,10 +41,9 @@ const cleanupEffect = (effect) => {
   });
   effect.deps.length = 0;
 };
-let activeEffect;
-export function effect(fn,options={}) {
+export function effect(fn, options = {}) {
   const _effect = new ReactiveEffect(fn);
-  extend(_effect,options)
+  extend(_effect, options);
   _effect.run();
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
@@ -52,9 +63,11 @@ export const track = (target, key) => {
     dep = new Set();
     depsMap.set(key, dep);
   }
- if(!activeEffect)return
-  dep.add(activeEffect);
-  activeEffect.deps.push(dep);
+  if (!activeEffect) return;
+  if (shouldTrack) {
+    dep.add(activeEffect);
+    activeEffect.deps.push(dep);
+  }
 };
 export const trigger = (target, key) => {
   let depsMap = targetMap.get(target);
