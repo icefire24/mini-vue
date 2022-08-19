@@ -69,12 +69,23 @@ export const track = (target, key) => {
     activeEffect.deps.push(dep);
   }
 };
+export const trackEffects=(dep) => {
+  if (dep.has(activeEffect)) return
+  dep.add(activeEffect);
+  activeEffect.deps.push(dep)
+}
+export const triggerEffects=(dep) => {
+   dep.forEach((dep) => {
+     dep.run();
+   });
+}
+export const isTrack=() => {
+ return shouldTrack&&activeEffect!=undefined
+}
 export const trigger = (target, key) => {
   let depsMap = targetMap.get(target);
   let dep = depsMap.get(key);
-  dep.forEach((dep) => {
-    dep.run();
-  });
+  triggerEffects(dep)
 };
 
 export const stop = (runner) => {

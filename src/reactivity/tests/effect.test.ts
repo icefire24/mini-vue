@@ -1,4 +1,4 @@
-import { isReactive, isReadonly, reactive, readonly } from "../reactive";
+import { isReactive, isReadonly, reactive, readonly,isProxy } from "../reactive";
 import { effect, stop } from "../effect";
 describe("effect", () => {
   test("effect", () => {
@@ -24,7 +24,8 @@ describe("effect", () => {
     expect(foo).toBe(12);
     expect(r).toBe("foo");
   });
-  it("stop", () => {
+
+  test("stop", () => {
     let dummy;
     const obj = reactive({ prop: 1 });
     const runner = effect(() => {
@@ -41,7 +42,7 @@ describe("effect", () => {
     runner();
     expect(dummy).toBe(3);
   });
-    it("events: onStop", () => {
+    test("events: onStop", () => {
       const onStop = jest.fn();
       const runner = effect(() => {}, {
         onStop,
@@ -50,19 +51,21 @@ describe("effect", () => {
       stop(runner);
       expect(onStop).toHaveBeenCalled();
     });
-    it("should make nested values readonly", () => {
+  
+    test("readonly", () => {
       const original = { foo: 1, bar: { baz: 2 } };
       const origina2 = { foo: 1, bar: { baz: 2 } };
-      const wrapped = readonly(original);
+      const wrapped = reactive(original);
       expect(wrapped).not.toBe(original);
     //   expect(isProxy(wrapped)).toBe(true);
-      expect(isReadonly(wrapped)).toBe(true);
+      expect(isReadonly(wrapped)).toBe(false);
       expect(isReactive(original)).toBe(false);
       expect(isReadonly(original)).toBe(false);
-      expect(isReactive(wrapped.bar)).toBe(false);
-    //   expect(isReadonly(wrapped.bar)).toBe(true);
-    //   expect(isReactive(original.bar)).toBe(false);
-    //   expect(isReadonly(original.bar)).toBe(false);
+      expect(isProxy(wrapped)).toBe(true);
+      expect(isReactive(wrapped.bar)).toBe(true);
+      // expect(isReadonly(wrapped.bar)).toBe(true);
+      expect(isReactive(original.bar)).toBe(false);
+      expect(isReadonly(original.bar)).toBe(false);
       // get
       expect(wrapped.foo).toBe(1);
     });
