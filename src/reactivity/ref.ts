@@ -21,8 +21,6 @@ class RefImpl {
     }
   }
   set value(val) {
-    console.log(val);
-
     if (hasChanged(val, this.oldvalue)) {
       this.oldvalue = val;
       this._value = convet(val);

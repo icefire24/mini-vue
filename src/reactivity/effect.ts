@@ -2,11 +2,11 @@ import { extend } from "../shared";
 let shouldTrack = false;
 let activeEffect;
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn;
   active = true;
   deps = [];
-  constructor(fn) {
+  constructor(fn,scheduler?) {
     this._fn = fn;
   }
   public onStop?: () => void;
@@ -41,9 +41,11 @@ const cleanupEffect = (effect) => {
   });
   effect.deps.length = 0;
 };
-export function effect(fn, options = {}) {
-  const _effect = new ReactiveEffect(fn);
+export function effect(fn, options:any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler);
   extend(_effect, options);
+  console.log(_effect);
+  
   _effect.run();
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
@@ -75,8 +77,13 @@ export const trackEffects=(dep) => {
   activeEffect.deps.push(dep)
 }
 export const triggerEffects=(dep) => {
-   dep.forEach((dep) => {
-     dep.run();
+   dep.forEach((effect) => {
+     if (effect.scheduler) {
+      effect.scheduler()
+     } else {
+       
+       effect.run();
+    }
    });
 }
 export const isTrack=() => {
