@@ -3,7 +3,7 @@ import { isTrack, trackEffects, triggerEffects } from "./effect";
 import { reactive } from "./reactive";
 
 class RefImpl {
-  private _value: any;
+  private _value: unknown;
   public oldvalue: any;
   public __v_isRef = true;
   public dep;
