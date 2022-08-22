@@ -2,7 +2,7 @@ import { hasChanged, isObject } from "../shared";
 import { isTrack, trackEffects, triggerEffects } from "./effect";
 import { reactive } from "./reactive";
 
-class RefImpl {
+class Rempl {
   private _value: unknown;
   public oldvalue: any;
   public __v_isRef = true;
@@ -32,7 +32,7 @@ const convet = (val) => {
   return isObject(val) ? reactive(val) : val;
 };
 const ref = (val) => {
-  return new RefImpl(val);
+  return new Rempl(val);
 };
 const shallowUnwrapHandlers = {
   get(target, key, receiver) {
