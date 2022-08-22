@@ -1,8 +1,18 @@
-import { h } from "../../../lib/guide-mini-vue.esm"
+import { h } from "../../../lib/esm.js"
 
 export const App = {
     render() {
-        return h('div','hi'+this.msg)
+        return h(
+          "div",
+          {
+            id: "root",
+            class: ["red", "hard"],
+          },
+          [
+            h("div", { class: ["red"] }, "nihao"),
+            h("div", { class: ["blue"] }, "hello"),
+          ]
+        );
     },
     setup() {
         return {

@@ -8,7 +8,7 @@ export default {
         },
         {
             format: "es",
-            file:"lib/guide-mini-vue.esm.js"
+            file:"lib/esm.js"
         }
     ],
     plugins: [

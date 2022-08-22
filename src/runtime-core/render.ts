@@ -5,9 +5,34 @@ export const render = (vnode, container) => {
 };
 
 const patch = (vnode, container) => {
-  processComponent(vnode, container);
+  if (typeof vnode.type=='string') {
+    
+    processElement(vnode,container)
+  } else {
+    
+    processComponent(vnode, container);
+  }
 };
-
+function processElement(vnode,container) {
+  mountEelment(vnode,container)
+}
+function mountEelment(vnode, container) {
+  const el:HTMLElement=document.createElement(vnode.type)
+  const { children, props } = vnode
+  if (typeof children == 'string') {
+    
+    el.textContent = children
+  } else {
+    children.forEach(v => {
+      patch(v,el)
+    });
+  }
+  for (const key in props) {
+    const val = props[key]
+    el.setAttribute(key,val)
+  }
+ container.append(el)
+}
 function processComponent(vnode, container) {
      mountComponent(vnode,container)
 }
