@@ -35,7 +35,5 @@ const handleSetupResult = (instance,setupResult) => {
 
 const finishComponentSetup = (instance) => {
     const Component = instance.type
-    if (!Component.render) {
         instance.render=Component.render
-    }
 };

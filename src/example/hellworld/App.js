@@ -1,6 +1,8 @@
+import { h } from "../../../lib/guide-mini-vue.esm"
+
 export const App = {
     render() {
-        return history('div','hi'+this.msg)
+        return h('div','hi'+this.msg)
     },
     setup() {
         return {
