@@ -9,7 +9,6 @@ const patch = (vnode, container) => {
     
     processElement(vnode,container)
   } else {
-    //TODO 未完成
     processComponent(vnode, container);
   }
 };
@@ -37,7 +36,8 @@ function mountEelment(vnode, container) {
     if (isClick(key)) {
       
       let eventtype = key.slice(2).toLowerCase()
-      el.addEventListener(eventtype,props[key])
+
+      el.addEventListener(eventtype, props[key])
     } else {
       
       const val = props[key]

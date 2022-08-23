@@ -1,52 +1,74 @@
+import { readonly } from "../reactivity/reactive";
+import { emit } from "./componentEmit";
+import { initProps } from "./componentProps";
+
 export const createComponentInstance = (vnode) => {
-    //生成组件实例
-    const component = {
-        vnode,
-        type: vnode.type,
-        setupState:{}
+  //生成组件实例
+  const instance = {
+    vnode,
+    type: vnode.type,
+      setupState: {},
+    emit:() => {
+    
     }
-    return component;
+    };
+    instance.emit=emit.bind(null,instance) as any
+  return instance;
 };
 
 export const setupComponent = (instance) => {
-
-        //initProps()    
-        //initSlots()
-        setupStatefulComponent(instance)
+  initProps(instance, instance.vnode.props);
+  //todoinitSlots()
+  setupStatefulComponent(instance);
 };
 
 const setupStatefulComponent = (instance) => {
-    const Component = instance.type
-    instance.proxy = new Proxy({}, {
-        get(target, key) {
-    const { setupState } = instance;
-
-            if (key in setupState) {
-                return setupState[key]
-            }
-
-            if (key == '$el') {
-                return instance.vnode.el
-            }
+  const Component = instance.type;
+  instance.proxy = new Proxy(
+    {},
+    {
+      get(target, key) {
+        const { setupState, props } = instance;
+        const hasOwn = (val, key) => {
+          return Object.prototype.hasOwnProperty.call(val, key);
+        };
+        if (hasOwn(setupState, key)) {
+          return setupState[key];
         }
-    })
-    const { setup } = Component
-    
-    if (setup) {
-        const setupResult= setup()
-        handleSetupResult(instance,setupResult)
+        if (hasOwn(props, key)) {
+          return props[key];
+        }
+
+        if (key == "$el") {
+          return instance.vnode.el;
+        }
+      },
     }
+  );
+  const { setup } = Component;
+  const { emit } = instance;
+
+  if (setup) {
+      let setupResult;
+      //props为只读对象
+    if (instance.props) {
+      setupResult = setup(/**BUG*/ readonly(instance.props),{emit});
+    } else {
+      setupResult = setup();
+    }
+    handleSetupResult(instance, setupResult);
+  }
 };
 
-const handleSetupResult = (instance,setupResult) => {
-    if (typeof setupResult == 'object') {
-        instance.setupState=setupResult
-    }
+const handleSetupResult = (instance, setupResult) => {
+  if (typeof setupResult == "object") {
+    instance.setupState = setupResult;
+  }
 
-    finishComponentSetup(instance)
+  finishComponentSetup(instance);
 };
 
 const finishComponentSetup = (instance) => {
-    const Component = instance.type
-        instance.render=Component.render
+  const Component = instance.type;
+  instance.render = Component.render;
 };

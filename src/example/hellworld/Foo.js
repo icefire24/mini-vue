@@ -1,7 +1,6 @@
-import { h } from "../../../lib/esm.js"
-import { Foo } from "./Foo.js";
+import { h } from "../../../lib/esm.js";
 
-export const App = {
+export const Foo = {
     render() {
         return h(
           "div",
@@ -12,16 +11,14 @@ export const App = {
               console.log('111');
             }
           },
-          [h(Foo, {
-            onAdd(a,b) {
-            console.log(a,b);
-          }},)]
+          'niaho'
         );
     },
-  setup() {
-      
+  setup(props,{emit}) {
+    emit('add',1,2)
+      console.log(props);
         return {
-            msg:"mini-vue"
+            msg:"子组件"
         }
     }
 }
