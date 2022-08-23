@@ -9,7 +9,7 @@ const patch = (vnode, container) => {
     
     processElement(vnode,container)
   } else {
-    
+    //TODO 未完成
     processComponent(vnode, container);
   }
 };
@@ -17,7 +17,8 @@ function processElement(vnode,container) {
   mountEelment(vnode,container)
 }
 function mountEelment(vnode, container) {
-  const el:HTMLElement=document.createElement(vnode.type)
+  const el: HTMLElement = document.createElement(vnode.type)
+  vnode.el=el
   const { children, props } = vnode
   if (typeof children == 'string') {
     
@@ -27,9 +28,21 @@ function mountEelment(vnode, container) {
       patch(v,el)
     });
   }
+  const isClick = (name: string) => {
+    let reg = /^on[A-Z]/
+    
+    return reg.test(name)
+  }
   for (const key in props) {
-    const val = props[key]
-    el.setAttribute(key,val)
+    if (isClick(key)) {
+      
+      let eventtype = key.slice(2).toLowerCase()
+      el.addEventListener(eventtype,props[key])
+    } else {
+      
+      const val = props[key]
+      el.setAttribute(key,val)
+    }
   }
  container.append(el)
 }
@@ -40,11 +53,13 @@ const mountComponent=(vnode,container) => {
     const instance = createComponentInstance(vnode)
     //初始化组件setup
     setupComponent(instance)
-    setupRenderEffect(instance,container)
+    setupRenderEffect(instance,vnode,container)
 }
-const setupRenderEffect = (instance,container) => {
-    const subTree = instance.render()
-    patch(subTree,container)
+const setupRenderEffect = (instance,vnode, container) => {
+    const {proxy} =instance
+    const subTree = instance.render.call(proxy)
+  patch(subTree, container)
+  vnode.el=subTree.el
 };
 
 

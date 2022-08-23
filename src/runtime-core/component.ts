@@ -2,7 +2,8 @@ export const createComponentInstance = (vnode) => {
     //生成组件实例
     const component = {
         vnode,
-        type:vnode.type
+        type: vnode.type,
+        setupState:{}
     }
     return component;
 };
@@ -16,7 +17,19 @@ export const setupComponent = (instance) => {
 
 const setupStatefulComponent = (instance) => {
     const Component = instance.type
-    
+    instance.proxy = new Proxy({}, {
+        get(target, key) {
+    const { setupState } = instance;
+
+            if (key in setupState) {
+                return setupState[key]
+            }
+
+            if (key == '$el') {
+                return instance.vnode.el
+            }
+        }
+    })
     const { setup } = Component
     
     if (setup) {

@@ -7,11 +7,11 @@ export const App = {
           {
             id: "root",
             class: ["red", "hard"],
+            onClick() {
+              console.log('111');
+            }
           },
-          [
-            h("div", { class: ["red"] }, "nihao"),
-            h("div", { class: ["blue"] }, "hello"),
-          ]
+          this.msg
         );
     },
     setup() {
