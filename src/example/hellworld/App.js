@@ -1,4 +1,4 @@
-import { h } from "../../../lib/esm.js"
+import { h, createTextVnode } from "../../../lib/esm.js";
 import { Foo } from "./Foo.js";
 
 export const App = {
@@ -9,13 +9,17 @@ export const App = {
             id: "root",
             class: ["red", "hard"],
             onClick() {
-              console.log('111');
-            }
+              console.log("111");
+            },
           },
-          [h(Foo, {
-            onAdd(a,b) {
-            console.log(a,b);
-          }},)]
+          [
+            h(Foo, {
+              onAdd(a, b) {
+                console.log(a, b);
+              },
+            }),
+            createTextVnode('text'),
+          ]
         );
     },
   setup() {

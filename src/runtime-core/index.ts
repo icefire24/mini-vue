@@ -1,2 +1,4 @@
+import { getCurrenInstance } from './component';
 export { createApp } from './createApp';
-export {h} from "./h"
+export { h, createTextVnode } from "./h";
+export {getCurrenInstance} from './component'

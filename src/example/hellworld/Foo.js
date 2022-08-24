@@ -1,4 +1,4 @@
-import { h } from "../../../lib/esm.js";
+import { getCurrenInstance, h } from "../../../lib/esm.js";
 
 export const Foo = {
     render() {
@@ -14,7 +14,9 @@ export const Foo = {
           'niaho'
         );
     },
-  setup(props,{emit}) {
+  setup(props, { emit }) {
+    let instance=getCurrenInstance()
+    console.log(instance);
     emit('add',1,2)
       console.log(props);
         return {

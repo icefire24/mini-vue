@@ -16,35 +16,42 @@ function processElement(vnode,container) {
   mountEelment(vnode,container)
 }
 function mountEelment(vnode, container) {
-  const el: HTMLElement = document.createElement(vnode.type)
-  vnode.el=el
-  const { children, props } = vnode
-  if (typeof children == 'string') {
-    
-    el.textContent = children
-  } else {
-    children.forEach(v => {
-      patch(v,el)
-    });
-  }
-  const isClick = (name: string) => {
-    let reg = /^on[A-Z]/
-    
-    return reg.test(name)
-  }
-  for (const key in props) {
-    if (isClick(key)) {
-      
-      let eventtype = key.slice(2).toLowerCase()
+  switch (vnode.type) {
+    case "Text":
+      const text: Text = document.createTextNode(vnode.children);
+      vnode.el = text;
+      container.appendChild(text);
+      break;
 
-      el.addEventListener(eventtype, props[key])
-    } else {
-      
-      const val = props[key]
-      el.setAttribute(key,val)
-    }
+    default:
+      const el: HTMLElement = document.createElement(vnode.type);
+      vnode.el = el;
+      const { children, props } = vnode;
+      if (typeof children == "string") {
+        el.textContent = children;
+      } else {
+        children.forEach((v) => {
+          patch(v, el);
+        });
+      }
+      const isClick = (name: string) => {
+        let reg = /^on[A-Z]/;
+
+        return reg.test(name);
+      };
+      for (const key in props) {
+        if (isClick(key)) {
+          let eventtype = key.slice(2).toLowerCase();
+
+          el.addEventListener(eventtype, props[key]);
+        } else {
+          const val = props[key];
+          el.setAttribute(key, val);
+        }
+      }
+      container.append(el);
+      break;
   }
- container.append(el)
 }
 function processComponent(vnode, container) {
      mountComponent(vnode,container)

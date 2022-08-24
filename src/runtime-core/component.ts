@@ -1,7 +1,7 @@
 import { readonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
-
+let currenInstance=null
 export const createComponentInstance = (vnode) => {
   //生成组件实例
   const instance = {
@@ -51,11 +51,13 @@ const setupStatefulComponent = (instance) => {
   if (setup) {
       let setupResult;
       //props为只读对象
+    setCurrenInstance(instance)
     if (instance.props) {
       setupResult = setup(/**BUG*/ readonly(instance.props),{emit});
     } else {
       setupResult = setup();
     }
+    setCurrenInstance(null)
     handleSetupResult(instance, setupResult);
   }
 };
@@ -72,3 +74,9 @@ const finishComponentSetup = (instance) => {
   const Component = instance.type;
   instance.render = Component.render;
 };
+function setCurrenInstance(instance) {
+  currenInstance=instance
+}
+export const getCurrenInstance = () => {
+  return currenInstance
+}
