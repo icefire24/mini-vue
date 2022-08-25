@@ -1,4 +1,4 @@
-import { getCurrenInstance, h } from "../../../lib/esm.js";
+import { getCurrenInstance, h, inject } from "../../../lib/esm.js";
 
 export const Foo = {
     render() {
@@ -8,17 +8,21 @@ export const Foo = {
             id: "root",
             class: ["red", "hard"],
             onClick() {
-              console.log('111');
+              
             }
           },
-          'niaho'
+          'hello'
         );
     },
   setup(props, { emit }) {
-    let instance=getCurrenInstance()
+    let instance = getCurrenInstance()
     console.log(instance);
-    emit('add',1,2)
-      console.log(props);
+    let res = inject('test')
+    let res2=inject('test2')
+    
+    console.log(res, res2,"res");
+    
+      
         return {
             msg:"子组件"
         }

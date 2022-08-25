@@ -2,17 +2,19 @@ import { readonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 let currenInstance=null
-export const createComponentInstance = (vnode) => {
+export const createComponentInstance = (vnode, parent) => {
+  
   //生成组件实例
   const instance = {
     vnode,
     type: vnode.type,
-      setupState: {},
-    emit:() => {
-    
-    }
-    };
-    instance.emit=emit.bind(null,instance) as any
+    setupState: {},
+    emit: () => {},
+    parent,
+    provides: parent?parent.provides:{}
+  };
+  instance.emit = emit.bind(null, instance) as any;
+  
   return instance;
 };
 
@@ -55,7 +57,7 @@ const setupStatefulComponent = (instance) => {
     if (instance.props) {
       setupResult = setup(/**BUG*/ readonly(instance.props),{emit});
     } else {
-      setupResult = setup();
+      setupResult = setup({},{emit});
     }
     setCurrenInstance(null)
     handleSetupResult(instance, setupResult);
@@ -77,6 +79,6 @@ const finishComponentSetup = (instance) => {
 function setCurrenInstance(instance) {
   currenInstance=instance
 }
-export const getCurrenInstance = () => {
+export const getCurrenInstance:any = () => {
   return currenInstance
 }

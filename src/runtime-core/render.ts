@@ -4,18 +4,17 @@ export const render = (vnode, container) => {
   patch(vnode, container);
 };
 
-const patch = (vnode, container) => {
-  if (typeof vnode.type=='string') {
-    
-    processElement(vnode,container)
+const patch = (vnode, container, parentInstance?) => {
+  if (typeof vnode.type == "string") {
+    processElement(vnode, container, parentInstance);
   } else {
-    processComponent(vnode, container);
+    processComponent(vnode, container, parentInstance);
   }
 };
-function processElement(vnode,container) {
-  mountEelment(vnode,container)
+function processElement(vnode, container, parentInstance) {
+  mountEelment(vnode, container, parentInstance);
 }
-function mountEelment(vnode, container) {
+function mountEelment(vnode, container, parentInstance) {
   switch (vnode.type) {
     case "Text":
       const text: Text = document.createTextNode(vnode.children);
@@ -31,7 +30,7 @@ function mountEelment(vnode, container) {
         el.textContent = children;
       } else {
         children.forEach((v) => {
-          patch(v, el);
+          patch(v, el, parentInstance);
         });
       }
       const isClick = (name: string) => {
@@ -53,20 +52,19 @@ function mountEelment(vnode, container) {
       break;
   }
 }
-function processComponent(vnode, container) {
-     mountComponent(vnode,container)
+function processComponent(vnode, container, parentInstance) {
+  mountComponent(vnode, container, parentInstance);
 }
-const mountComponent=(vnode,container) => {
-    const instance = createComponentInstance(vnode)
-    //初始化组件setup
-    setupComponent(instance)
-    setupRenderEffect(instance,vnode,container)
-}
-const setupRenderEffect = (instance,vnode, container) => {
-    const {proxy} =instance
-    const subTree = instance.render.call(proxy)
-  patch(subTree, container)
-  vnode.el=subTree.el
+const mountComponent = (vnode, container, parentInstance) => {
+  const instance = createComponentInstance(vnode, parentInstance);
+  //初始化组件setup
+  setupComponent(instance);
+  setupRenderEffect(instance, vnode, container);
 };
+const setupRenderEffect = (instance, vnode, container) => {
+  const { proxy } = instance;
+  const subTree = instance.render.call(proxy);
 
-
+  patch(subTree, container, instance);
+  vnode.el = subTree.el;
+};
