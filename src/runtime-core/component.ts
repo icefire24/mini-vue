@@ -1,4 +1,5 @@
 import { readonly } from "../reactivity/reactive";
+import { proxyRefs } from "../reactivity/ref";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 let currenInstance=null
@@ -11,7 +12,9 @@ export const createComponentInstance = (vnode, parent) => {
     setupState: {},
     emit: () => {},
     parent,
-    provides: parent?parent.provides:{}
+    provides: parent ? parent.provides : {},
+    isMount: true,
+    subTree:null
   };
   instance.emit = emit.bind(null, instance) as any;
   
@@ -66,7 +69,7 @@ const setupStatefulComponent = (instance) => {
 
 const handleSetupResult = (instance, setupResult) => {
   if (typeof setupResult == "object") {
-    instance.setupState = setupResult;
+    instance.setupState = proxyRefs(setupResult);
   }
 
   finishComponentSetup(instance);

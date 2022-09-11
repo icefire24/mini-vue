@@ -44,8 +44,6 @@ const cleanupEffect = (effect) => {
 export function effect(fn, options:any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler);
   extend(_effect, options);
-  console.log(_effect);
-  
   _effect.run();
   const runner: any = _effect.run.bind(_effect);
   runner.effect = _effect;
