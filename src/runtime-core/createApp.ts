@@ -1,7 +1,7 @@
 import { createVnode } from "./createVnode";
-import { render } from "./render";
 
-export const createApp = (rootComponent) => {
+export function createAppApi(render) {
+  return function createApp (rootComponent){
   return {
       mount(rootContainer) {
           const vnode=createVnode(rootComponent)
@@ -10,5 +10,9 @@ export const createApp = (rootComponent) => {
     }
   };
 };
+
+}
+
+
 
 

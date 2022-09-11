@@ -22,10 +22,10 @@ describe("ref",() => {
    });
 
    it("should make nested properties reactive", () => {
-     const a = ref({
+     const a:any = ref({
        count: 1,
      });
-     let dummy;
+     let dummy:any;
      effect(() => {
        dummy = a.value.count;
      });

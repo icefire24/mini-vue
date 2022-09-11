@@ -1,20 +1,6 @@
-import { h, createTextVnode, provide, inject } from "../../../lib/esm.js";
+import { h, createTextVnode, provide, inject,ref } from "../../../lib/esm.js";
 import { Foo } from "./Foo.js";
-const Head = {
-  render() {
-    return h(
-      'div',
-        {},
-      [h(Foo)]
-    )
-  },
-  setup() {
-    provide("test2", 'no')
-    let res=inject('test2')
-    console.log(res);
-   return {num:2}
- }
-}
+
 export const App = {
     render() {
         return h(
@@ -24,16 +10,15 @@ export const App = {
             class: ["red", "hard"],
             onClick() {},
           },
-          [h(Head, {
-            onAdd(a, b) {},
-          })]
+          [h('div', {
+            
+          },'niaho'),h('div',{onClick(){this.num++}},'点击')]
         );
     },
   setup() {
-       provide('test','nihao')
-       provide("test2", "hello");
+       let num=ref(1)
         return {
-            msg:"mini-vue"
+            num
         }
     }
 }
