@@ -32,8 +32,6 @@ export function createRenderer(options) {
       const el: any = createElement(n2.type);
       n2.el = el;
       const { children, props } = n2;
-      console.log(children);
-
       //子节点是文本直接插入
       if (typeof children == "string" || typeof children == "number") {
         el.textContent = children;
@@ -45,16 +43,43 @@ export function createRenderer(options) {
       }
       for (const key in props) {
         const val = props[key];
-        patchProp(el, key, val);
+        patchProp(el, key, null,val);
       }
-      // container.append(el);
       insert(el, container);
     } else {
       console.log('update');
-      
+      const { children, props } = n2;
+     //props更新
+      for (const key in props) {
+        const nextProps = props[key];
+        const preProps=n1.props[key]
+        patchProp(n1.el, key, preProps,nextProps);
+      }
+      // children更新
+      patchChildren(n1, n2, parentInstance);
     }
   }
-
+  function patchChildren(pre, next,parentInstance) {
+  const preChildren=pre.children
+  const nextChildren = next.children;
+  if (typeof nextChildren == 'string') {
+    if (Array.isArray(preChildren)) {
+      //把老的children清空
+      pre.el.innerHtml = ''
+    } 
+    //赋值新的
+      preChildren!=nextChildren? pre.el.textContent = nextChildren:''
+  } else {
+    if (typeof preChildren == 'string') {
+      console.log(pre.el);
+      
+      pre.el.innerHtml = "";
+      // nextChildren.forEach((v) => {
+      //   patch(null, v, pre.el, parentInstance);
+      // });
+    }
+  }
+}
   function processComponent(vnode, container, parentInstance) {
     mountComponent(vnode, container, parentInstance);
   }
@@ -65,23 +90,20 @@ export function createRenderer(options) {
     setupRenderEffect(instance, vnode, container);
   };
   const setupRenderEffect = (instance, vnode, container) => {
+    //响应式变量更新后重新触发页面渲染
     effect(() => {
       //初始化节点
       if (instance.isMount) {
         const { proxy } = instance;
         const subTree=instance.subTree = instance.render.call(proxy);
-        
         patch(null,subTree, container, instance);
         vnode.el = subTree.el;
         instance.isMount=false
       } else {
-        console.log('usb');
-        
         //更新节点对比subTree
         const { proxy } = instance;
         const preSubTree=instance.subTree
         const subTree = (instance.subTree = instance.render.call(proxy));
-
         patch(preSubTree,subTree, container, instance);
         vnode.el = subTree.el;
       }

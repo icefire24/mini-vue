@@ -6,12 +6,12 @@ export const App = {
     return h(
       "div",
       {
-        id: "root",
-        class: ["red", "hard"],
+        class: 'red',
        
       },
+      this.root?
       [
-        h("div", {}, this.num),
+        h('Text',{},'libaier'),
         h(
           "div",
           {
@@ -19,16 +19,20 @@ export const App = {
           },
           "点击"
         ),
-      ]
+      ]:'niaho'
+      // 'nihao'
     );
   },
-  setup() {
+  setup(props, { emit }) {
+    window.flag=true
     let num = ref(1);
+    let root = ref(true)
+    window.root=root
     const add = () => {
-      console.log(num.value);
-      num.value++;
+      root.value=!root.value
     };
     return {
+      root,
       num,
       add,
     };

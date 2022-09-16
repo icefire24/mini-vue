@@ -5,24 +5,12 @@ export const Foo = {
         return h(
           "div",
           {
-            id: "root",
-            class: ["red", "hard"],
-            onClick() {
-              
-            }
+            
           },
-          'hello'
+          [h('Text',{},'libaiyi')]
         );
     },
   setup(props, { emit }) {
-    let instance = getCurrenInstance()
-    console.log(instance);
-    let res = inject('test')
-    let res2=inject('test2')
-    
-    console.log(res, res2,"res");
-    
-      
         return {
             msg:"子组件"
         }

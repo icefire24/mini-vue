@@ -24,6 +24,8 @@ export const createComponentInstance = (vnode, parent) => {
 export const setupComponent = (instance) => {
   initProps(instance, instance.vnode.props);
   //todoinitSlots()
+  console.log(instance);
+  
   setupStatefulComponent(instance);
 };
 
@@ -58,6 +60,9 @@ const setupStatefulComponent = (instance) => {
       //props为只读对象
     setCurrenInstance(instance)
     if (instance.props) {
+      console.log(instance.props);
+      console.log(instance);
+      
       setupResult = setup(/**BUG*/ readonly(instance.props),{emit});
     } else {
       setupResult = setup({},{emit});
