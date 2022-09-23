@@ -49,6 +49,12 @@ const setupStatefulComponent = (instance) => {
         if (key == "$el") {
           return instance.vnode.el;
         }
+        if (key == "$props") {
+          return instance.vnode.props;
+        }
+        if (key == "$slot") {
+          return instance.vnode.slot;
+        }
       },
     }
   );

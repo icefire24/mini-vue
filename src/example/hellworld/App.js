@@ -11,7 +11,7 @@ export const App = {
       },
       this.root?
       [
-        h('Text',{},'libaier'),
+        h(Foo,{msg:this.num},null),
         h(
           "div",
           {
@@ -24,12 +24,11 @@ export const App = {
     );
   },
   setup(props, { emit }) {
-    window.flag=true
-    let num = ref(1);
+    let num = ref(123);
     let root = ref(true)
     window.root=root
     const add = () => {
-      root.value=!root.value
+      num.value=456
     };
     return {
       root,

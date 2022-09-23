@@ -1,4 +1,4 @@
-import { getCurrenInstance, h, inject } from "../../../lib/esm.js";
+import { getCurrenInstance, h, inject,ref } from "../../../lib/esm.js";
 
 export const Foo = {
     render() {
@@ -6,13 +6,19 @@ export const Foo = {
           "div",
           {
             
-          },
-          [h('Text',{},'libaiyi')]
+            },
+          root2?
+          [h('Text',{},this.$props.msg)]:'root2'
         );
     },
   setup(props, { emit }) {
+        let root2 = ref(true);
+        window.root2 = root2;
+        const add = () => {
+          root2.value = !root2.value;
+        };
         return {
-            msg:"子组件"
-        }
+          root2,
+        };
     }
 }

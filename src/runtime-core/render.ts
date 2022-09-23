@@ -19,9 +19,9 @@ export function createRenderer(options) {
     }
   };
   function processText(vnode, container, parentInstance) {
-    const text: Text = document.createTextNode(vnode.children);
+    // const text: Text = document.createTextNode(vnode.children);
     vnode.el = container;
-    container.appendChild(text);
+    container.textContent =vnode.children;
   }
   function processElement(n1,n2, container, parentInstance) {
     mountEelment(n1,n2, container, parentInstance);
@@ -49,6 +49,7 @@ export function createRenderer(options) {
     } else {
       console.log('update');
       const { children, props } = n2;
+      n2.el=n1.el
      //props更新
       for (const key in props) {
         const nextProps = props[key];
@@ -61,7 +62,7 @@ export function createRenderer(options) {
   }
   function patchChildren(pre, next,parentInstance) {
   const preChildren=pre.children
-  const nextChildren = next.children;
+    const nextChildren = next.children;
   if (typeof nextChildren == 'string') {
     if (Array.isArray(preChildren)) {
       //把老的children清空
@@ -71,12 +72,10 @@ export function createRenderer(options) {
       preChildren!=nextChildren? pre.el.textContent = nextChildren:''
   } else {
     if (typeof preChildren == 'string') {
-      console.log(pre.el);
-      
-      pre.el.innerHtml = "";
-      // nextChildren.forEach((v) => {
-      //   patch(null, v, pre.el, parentInstance);
-      // });
+      pre.el.innerHtml = '';
+      nextChildren.forEach((v) => {
+        patch(null, v, pre.el, parentInstance);
+      });
     }
   }
 }
@@ -91,6 +90,8 @@ export function createRenderer(options) {
   };
   const setupRenderEffect = (instance, vnode, container) => {
     //响应式变量更新后重新触发页面渲染
+    console.log('kk');
+    
     effect(() => {
       //初始化节点
       if (instance.isMount) {
@@ -101,11 +102,13 @@ export function createRenderer(options) {
         instance.isMount=false
       } else {
         //更新节点对比subTree
+        console.log(222);
+        
         const { proxy } = instance;
         const preSubTree=instance.subTree
         const subTree = (instance.subTree = instance.render.call(proxy));
-        patch(preSubTree,subTree, container, instance);
         vnode.el = subTree.el;
+        patch(preSubTree,subTree, container, instance);
       }
     });
   };
