@@ -15,9 +15,14 @@ export function createRenderer(options) {
         processElement(n1,n2, container, parentInstance);
       } else {
         processComponent(n2, container, parentInstance);
+        // !n1 ? processComponent(n2, container, parentInstance) :
+        //   updateComponent(n1,n2,container,parentInstance)
       }
     }
   };
+  function updateComponent(n1, n2,container, parentInstance) {
+    //TODO更新组件
+  }
   function processText(vnode, container, parentInstance) {
     // const text: Text = document.createTextNode(vnode.children);
     vnode.el = container;
@@ -76,6 +81,12 @@ export function createRenderer(options) {
       nextChildren.forEach((v) => {
         patch(null, v, pre.el, parentInstance);
       });
+    } else {
+      //tododiff算法对比更新子节点
+      pre.el.innerHtml=''
+      nextChildren.forEach((v) => {
+        patch(null, v, pre.el, parentInstance);
+      });
     }
   }
 }
@@ -102,8 +113,6 @@ export function createRenderer(options) {
         instance.isMount=false
       } else {
         //更新节点对比subTree
-        console.log(222);
-        
         const { proxy } = instance;
         const preSubTree=instance.subTree
         const subTree = (instance.subTree = instance.render.call(proxy));
