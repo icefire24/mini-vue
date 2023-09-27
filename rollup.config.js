@@ -4,7 +4,7 @@ export default {
     output: [
         {
             format: "cjs",
-            file:"lib/guide-mini-vue.cjs.js"
+            file:"lib/cjs.js"
         },
         {
             format: "es",

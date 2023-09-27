@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js",
+    "watch": "rollup -c rollup.config.js --watch"
   },
   "license": "MIT",
   "dependencies": {
