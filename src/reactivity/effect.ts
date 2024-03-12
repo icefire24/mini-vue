@@ -4,10 +4,12 @@ let activeEffect;
 
 export class ReactiveEffect {
   private _fn;
+  private scheduler;
   active = true;
   deps = [];
   constructor(fn,scheduler?) {
     this._fn = fn;
+    this.scheduler = scheduler;
   }
   public onStop?: () => void;
 

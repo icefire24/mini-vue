@@ -7,28 +7,30 @@ export const App = {
       "div",
       {
         class: 'red',
-       
+
       },
-      this.root?
-      [
-        h(Foo,{msg:this.num},null),
-        h(
-          "div",
-          {
-            onClick:this.add
-          },
-          "点击"
-        ),
-      ]:'niaho'
+      this.root ?
+        [
+          h(Foo, { msg: this.num }, null),
+          h(
+            "div",
+            {
+              onClick: this.add
+            },
+            "点击"
+          ),
+        ] : 'niaho'
       // 'nihao'
     );
   },
   setup(props, { emit }) {
     let num = ref(123);
     let root = ref(true)
-    window.root=root
+    window.root = root
     const add = () => {
-      num.value=456
+      for (let index = 0; index < 100; index++) {
+        num.value++;
+      }
     };
     return {
       root,

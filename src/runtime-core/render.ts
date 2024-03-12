@@ -103,23 +103,30 @@ export function createRenderer(options) {
     //响应式变量更新后重新触发页面渲染
     console.log('kk')
 
-    effect(() => {
-      //初始化节点
-      if (instance.isMount) {
-        const { proxy } = instance
-        const subTree = (instance.subTree = instance.render.call(proxy))
-        patch(null, subTree, container, instance)
-        vnode.el = subTree.el
-        instance.isMount = false
-      } else {
-        //更新节点对比subTree
-        const { proxy } = instance
-        const preSubTree = instance.subTree
-        const subTree = (instance.subTree = instance.render.call(proxy))
-        vnode.el = subTree.el
-        patch(preSubTree, subTree, container, instance)
+    effect(
+      () => {
+        //初始化节点
+        if (instance.isMount) {
+          const { proxy } = instance
+          const subTree = (instance.subTree = instance.render.call(proxy))
+          patch(null, subTree, container, instance)
+          vnode.el = subTree.el
+          instance.isMount = false
+        } else {
+          //更新节点对比subTree
+          const { proxy } = instance
+          const preSubTree = instance.subTree
+          const subTree = (instance.subTree = instance.render.call(proxy))
+          vnode.el = subTree.el
+          patch(preSubTree, subTree, container, instance)
+        }
+      },
+      {
+        scheduler() {
+          console.log('scheduler')
+        }
       }
-    })
+    )
   }
   return {
     createApp: createAppApi(render)
