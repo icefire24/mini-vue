@@ -1,6 +1,7 @@
 import { effect } from '../reactivity/effect'
 import { createComponentInstance, setupComponent } from './component'
 import { createAppApi } from './createApp'
+import { queueJobs } from './queueJob'
 export function createRenderer(options) {
   const { createElement, insert, patchProp } = options
   const render = (vnode, container) => {
@@ -103,7 +104,7 @@ export function createRenderer(options) {
     //响应式变量更新后重新触发页面渲染
     console.log('kk')
 
-    effect(
+    instance.update=effect(
       () => {
         //初始化节点
         if (instance.isMount) {
@@ -123,7 +124,7 @@ export function createRenderer(options) {
       },
       {
         scheduler() {
-          console.log('scheduler')
+          queueJobs(instance.update)
         }
       }
     )

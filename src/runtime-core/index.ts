@@ -1,6 +1,6 @@
 export * from '../reactivity'
-import { getCurrenInstance } from './component';
-export { h, createTextVnode } from "./h";
-export { getCurrenInstance } from './component'
+export { getCurrentInstance } from './component'
+export { h, createTextVnode } from './h'
 export { provide, inject } from './apiprovides'
-export { createRenderer } from "./render";
+export { createRenderer } from './render'
+export { nextTick } from './queueJob'

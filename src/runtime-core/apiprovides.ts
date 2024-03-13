@@ -1,6 +1,6 @@
-import { getCurrenInstance } from './component'
+import { getCurrentInstance } from './component'
 export function provide(key: any, val: any) {
-  let instance = getCurrenInstance()
+  let instance = getCurrentInstance()
 
   if (instance.provides === instance.parent?.provides) {
     instance.provides = Object.create(instance.parent.provides)
@@ -9,7 +9,7 @@ export function provide(key: any, val: any) {
   instance.provides[key] = val
 }
 export function inject(key: any, defaultval?: any) {
-  let { provides, parent } = getCurrenInstance()
+  let { provides, parent } = getCurrentInstance()
   if (key in parent.provides) {
     return parent.provides[key]
   } else if (defaultval) {

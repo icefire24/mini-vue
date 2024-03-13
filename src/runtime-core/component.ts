@@ -1,10 +1,9 @@
-import { readonly } from "../reactivity/reactive";
-import { proxyRefs } from "../reactivity/ref";
-import { emit } from "./componentEmit";
-import { initProps } from "./componentProps";
-let currenInstance=null
+import { readonly } from '../reactivity/reactive'
+import { proxyRefs } from '../reactivity/ref'
+import { emit } from './componentEmit'
+import { initProps } from './componentProps'
+let currentInstance = null
 export const createComponentInstance = (vnode, parent) => {
-  
   //生成组件实例
   const instance = {
     vnode,
@@ -14,85 +13,85 @@ export const createComponentInstance = (vnode, parent) => {
     parent,
     provides: parent ? parent.provides : {},
     isMount: true,
-    subTree:null
-  };
-  instance.emit = emit.bind(null, instance) as any;
-  
-  return instance;
-};
+    subTree: null
+  }
+  instance.emit = emit.bind(null, instance) as any
+
+  return instance
+}
 
 export const setupComponent = (instance) => {
-  initProps(instance, instance.vnode.props);
+  initProps(instance, instance.vnode.props)
   //todoinitSlots()
-  console.log(instance);
-  
-  setupStatefulComponent(instance);
-};
+  console.log(instance)
+
+  setupStatefulComponent(instance)
+}
 
 const setupStatefulComponent = (instance) => {
-  const Component = instance.type;
+  const Component = instance.type
   instance.proxy = new Proxy(
     {},
     {
       get(target, key) {
-        const { setupState, props } = instance;
+        const { setupState, props } = instance
         const hasOwn = (val, key) => {
-          return Object.prototype.hasOwnProperty.call(val, key);
-        };
+          return Object.prototype.hasOwnProperty.call(val, key)
+        }
         if (hasOwn(setupState, key)) {
-          return setupState[key];
+          return setupState[key]
         }
         if (hasOwn(props, key)) {
-          return props[key];
+          return props[key]
         }
 
-        if (key == "$el") {
-          return instance.vnode.el;
+        if (key == '$el') {
+          return instance.vnode.el
         }
-        if (key == "$props") {
-          return instance.vnode.props;
+        if (key == '$props') {
+          return instance.vnode.props
         }
-        if (key == "$slot") {
-          return instance.vnode.slot;
+        if (key == '$slot') {
+          return instance.vnode.slot
         }
-      },
+      }
     }
-  );
-  const { setup } = Component;
-  const { emit } = instance;
+  )
+  const { setup } = Component
+  const { emit } = instance
 
   if (setup) {
-      let setupResult;
-      //props为只读对象
-    setCurrenInstance(instance)
+    let setupResult
+    //props为只读对象
+    setCurrentInstance(instance)
     if (instance.props) {
-      console.log(instance.props);
-      console.log(instance);
-      
-      setupResult = setup(/**BUG*/ readonly(instance.props),{emit});
+      console.log(instance.props)
+      console.log(instance)
+
+      setupResult = setup(/**BUG*/ readonly(instance.props), { emit })
     } else {
-      setupResult = setup({},{emit});
+      setupResult = setup({}, { emit })
     }
-    setCurrenInstance(null)
-    handleSetupResult(instance, setupResult);
+    setCurrentInstance(null)
+    handleSetupResult(instance, setupResult)
   }
-};
+}
 
 const handleSetupResult = (instance, setupResult) => {
-  if (typeof setupResult == "object") {
-    instance.setupState = proxyRefs(setupResult);
+  if (typeof setupResult == 'object') {
+    instance.setupState = proxyRefs(setupResult)
   }
 
-  finishComponentSetup(instance);
-};
+  finishComponentSetup(instance)
+}
 
 const finishComponentSetup = (instance) => {
-  const Component = instance.type;
-  instance.render = Component.render;
-};
-function setCurrenInstance(instance) {
-  currenInstance=instance
+  const Component = instance.type
+  instance.render = Component.render
 }
-export const getCurrenInstance:any = () => {
-  return currenInstance
+function setCurrentInstance(instance) {
+  currentInstance = instance
+}
+export const getCurrentInstance: any = () => {
+  return currentInstance
 }

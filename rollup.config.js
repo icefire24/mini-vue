@@ -8,7 +8,8 @@ export default {
         },
         {
             format: "es",
-            file:"lib/esm.js"
+            file: "lib/esm.js",
+            sourcemap:true
         }
     ],
     plugins: [

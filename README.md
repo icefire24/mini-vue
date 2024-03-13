@@ -123,40 +123,39 @@ Vue.js 的这部分代码就不会包含在最终的资源中，从而减小资�
 渲染器：渲染器的作用就是把虚拟 DOM 渲染为真实 DOM
 
 ```javascript
-01 const vnode = {
-02 tag: 'div',
-03 props: {
-04 onClick: () => alert('hello')
-05 },
-06 children: 'click me'
-07 }
+ const vnode = {
+ tag: 'div',
+ props: {
+ onClick: () => alert('hello')
+ },
+ children: 'click me'
+ 
+ function renderer(vnode, container) {
+ // 使用 vnode.tag 作为标签名称创建 DOM 元素
+ const el = document.createElement(vnode.tag)
+ // 遍历 vnode.props，将属性、事件添加到 DOM 元素
+ for (const key in vnode.props) {
+ if (/^on/.test(key)) {
+ // 如果 key 以 on 开头，说明它是事件
+ el.addEventListener(
+ key.substr(2).toLowerCase(), // 事件名称 onClick --->click
+ vnode.props[key] // 事件处理函数
+ )
+ }
+ }
 
-01 function renderer(vnode, container) {
-02 // 使用 vnode.tag 作为标签名称创建 DOM 元素
-03 const el = document.createElement(vnode.tag)
-04 // 遍历 vnode.props，将属性、事件添加到 DOM 元素
-05 for (const key in vnode.props) {
-06 if (/^on/.test(key)) {
-07 // 如果 key 以 on 开头，说明它是事件
-08 el.addEventListener(
-09 key.substr(2).toLowerCase(), // 事件名称 onClick --->click
-10 vnode.props[key] // 事件处理函数
-11 )
-12 }
-13 }
-14
-15 // 处理 children
-16 if (typeof vnode.children === 'string') {
-17 // 如果 children 是字符串，说明它是元素的文本子节点
-18 el.appendChild(document.createTextNode(vnode.children))
-19 } else if (Array.isArray(vnode.children)) {
-20 // 递归地调用 renderer 函数渲染子节点，使用当前元素 el 作为挂载点
-21 vnode.children.forEach(child => renderer(child, el))
-22 }
-23
-24 // 将元素添加到挂载点下
-25 container.appendChild(el)
-26 }
+ // 处理 children
+ if (typeof vnode.children === 'string') {
+ // 如果 children 是字符串，说明它是元素的文本子节点
+ el.appendChild(document.createTextNode(vnode.children))
+ } else if (Array.isArray(vnode.children)) {
+ // 递归地调用 renderer 函数渲染子节点，使用当前元素 el 作为挂载点
+ vnode.children.forEach(child => renderer(child, el))
+ }
+
+ // 将元素添加到挂载点下
+ container.appendChild(el)
+ }
 ```
 
 ## 响应式
@@ -166,27 +165,16 @@ Vue.js 的这部分代码就不会包含在最终的资源中，从而减小资�
 为了方便描述，我们把图 4-3 中的 Set 数据结构所存储的副作用函数集合称为 key 的依赖集合。搞清了它们之间的关系，我们有必要解释一下这里为什么要使用WeakMap，这其实涉及 WeakMap 和 Map 的区别，我们用一段代码来讲解：
 
 ```javascript
-01 const map = new Map();
+ const map = new Map()
+ const weakmap = new WeakMap()
 
-02 const weakmap = new WeakMap();
+ (function()
+ const foo = {foo: 1}
+ const bar = {bar: 2}
 
-03
-
-04 (function(){
-
-05 const foo = {foo: 1};
-
-06 const bar = {bar: 2};
-
-07
-
-08 map.set(foo, 1);
-
-09 weakmap.set(bar, 2);
-
-10 })()
+ map.set(foo, 1)
+ weakmap.set(bar, 2)
+ })()
 ```
 
 首先，我们定义了 map 和 weakmap 常量，分别对应 Map 和WeakMap 的实例。接着定义了一个立即执行的函数表达式（IIFE），在函数表达式内部定义了两个对象：foo 和 bar，这两个对象分别作为 map 和 weakmap 的 key。当该函数表达式执行完毕后，对于对象foo 来说，它仍然作为 map 的 key 被引用着，因此垃圾回收器（grabage collector）不会把它从内存中移除，我们仍然可以通map.keys 打印出对象 foo。然而对于对象 bar 来说，由于 WeakMap的 key 是弱引用，它不影响垃圾回收器的工作，所以一旦表达式执行完毕，垃圾回收器就会把对象 bar 从内存中移除，并且我们无法获取weakmap 的 key 值，也就无法通过 weakmap 取得对象 bar。简单地说，WeakMap 对 key 是弱引用，不影响垃圾回收器的工作。据这个特性可知，一旦 key 被垃圾回收器回收，那么对应的键和值就访问不到了。所以 WeakMap 经常用于存储那些只有当 key 所引用的对象存在时（没有被回收）才有价值的信息，例如上面的场景中，如果 target 对象没有任何引用了，说明用户侧不再需要它了，这时垃圾回收器会完成回收任务。但如果使用 Map 来代替 WeakMap，那么即使用户侧的代码对 target 没有任何引用，这个 target 也不会被回收，最终可能导致内存溢出。
-
-hello

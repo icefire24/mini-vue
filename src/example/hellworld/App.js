@@ -1,4 +1,4 @@
-import { h, createTextVnode, provide, inject, ref } from "../../../lib/esm.js";
+import { h, createTextVnode, provide, inject, ref, getCurrentInstance } from "../../../lib/esm.js";
 import { Foo } from "./Foo.js";
 
 export const App = {
@@ -31,6 +31,9 @@ export const App = {
       for (let index = 0; index < 100; index++) {
         num.value++;
       }
+      let instance=getCurrentInstance()
+      console.log(instance);
+      
     };
     return {
       root,
